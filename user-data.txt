@@ -65,5 +65,27 @@ if [ ${PLAT} = "ubuntu" ]; then
       if ! ${AUTOUPDATE}; then
             echo "Disabling Auto Update"
             sed -i '/@reboot/d' /etc/cron.d/codedeploy-agent-update
+            chattr +i /etc/cron.d/codedeploy-agent-update
+            rm -f /tmp/install
+        fi
+      exit 0
+    else
+      echo "Instalation script failed, please investigate"
+      rm -f /tmp/install
+      exit 1
+    fi
+
+else
+  echo "Unsupported platform ''${PLAT}''"
+fi
+
+}
+
+platformize
+installdep
+REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r ".region")
+execute
+
+            
 
  
