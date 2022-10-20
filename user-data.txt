@@ -48,3 +48,22 @@ elif hash yum; then
    exit 1
 
  fi
+
+}
+
+
+function execute(){
+
+if [ ${PLAT} = "ubuntu" ]; then
+
+  cd /tmp/
+  wget https://aws-codedeploy-${REGION}.s3.amazonaws.com/latest/install
+  chmod +x ./install
+
+  if ./install auto; then
+    echo "Instalation completed"
+      if ! ${AUTOUPDATE}; then
+            echo "Disabling Auto Update"
+            sed -i '/@reboot/d' /etc/cron.d/codedeploy-agent-update
+
+ 
