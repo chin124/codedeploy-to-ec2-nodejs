@@ -7,3 +7,44 @@ sudo apt install nodejs -y
 # INSTALL NPM & PM2 - ONLY FOR UBUNTU
 sudo apt install npm -y
 sudo npm install pm2@latest -g
+                                                                                                                                     
+## Code Deploy Agent Bootstrap Script##
+
+exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+AUTOUPDATE=false
+
+function installdep(){
+
+if [ ${PLAT} = "ubuntu" ]; then
+
+  apt-get -y update
+  # Satisfying even ubuntu older versions.
+  apt-get -y install jq awscli ruby2.0 || apt-get -y install jq awscli ruby
+
+
+
+elif [ ${PLAT} = "amz" ]; then
+  yum -y update
+  yum install -y aws-cli ruby jq
+
+fi
+
+}
+
+function platformize(){
+
+#Linux OS detection#
+ if hash lsb_release; then
+   echo "Ubuntu server OS detected"
+   export PLAT="ubuntu"
+
+
+elif hash yum; then
+  echo "Amazon Linux detected"
+  export PLAT="amz"
+
+ else
+   echo "Unsupported release"
+   exit 1
+
+ fi
